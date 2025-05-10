@@ -1,0 +1,565 @@
+:root {
+  --primary: #3a86ff;
+  --primary-dark: #2a65cc;
+  --secondary: #8338ec;
+  --success: #38b000;
+  --danger: #e5383b;
+  --light: #f8f9fa;
+  --dark: #212529;
+  --background: #f0f2f5;
+  --card: #ffffff;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--background);
+  color: var(--dark);
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+}
+
+.logo svg {
+  margin-right: 10px;
+}
+
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  background-color: var(--card);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--dark);
+}
+
+.card-content {
+  color: var(--dark);
+}
+
+.wallet-card {
+  border-left: 4px solid var(--primary);
+}
+
+.wallet-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.connected {
+  background-color: var(--success);
+}
+
+.disconnected {
+  background-color: var(--danger);
+}
+
+.address-display {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: monospace;
+  word-break: break-all;
+  margin: 10px 0;
+}
+
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button svg {
+  margin-right: 8px;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+button.secondary {
+  background-color: var(--secondary);
+}
+
+button.secondary:hover {
+  background-color: #6a2cc5;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--card);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  margin-bottom: 24px;
+}
+
+.modal-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--dark);
+}
+
+.wallet-options {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.wallet-option {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.wallet-option:hover {
+  background-color: rgba(58, 134, 255, 0.05);
+}
+
+.wallet-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-name {
+  font-weight: 500;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Info Items */
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 500;
+  color: var(--dark);
+  opacity: 0.7;
+}
+
+.info-value {
+  font-weight: 600;
+}
+
+.explorer-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.explorer-link:hover {
+  text-decoration: underline;
+}
+
+/* Transaction Items */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.transaction-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.transaction-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.05);
+  margin-right: 12px;
+}
+
+.transaction-details {
+  flex: 1;
+}
+
+.transaction-type {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.transaction-date {
+  font-size: 12px;
+  color: var(--dark);
+  opacity: 0.6;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  margin-right: 12px;
+}
+
+.transaction-status {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.transaction-status.completed {
+  background-color: rgba(56, 176, 0, 0.1);
+  color: var(--success);
+}
+
+.transaction-status.pending {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+}
+
+.transaction-status.failed {
+  background-color: rgba(229, 56, 59, 0.1);
+  color: var(--danger);
+}
+
+/* App Layout */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Solidity Interaction Styles */
+.solidity-card {
+  border-left: 4px solid var(--secondary);
+  grid-column: 1 / -1;
+}
+
+.tab-navigation {
+  display: flex;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tab-button {
+  background: transparent;
+  color: var(--dark);
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  position: relative;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.tab-button:hover {
+  opacity: 1;
+  background: transparent;
+}
+
+.tab-button.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--secondary);
+}
+
+.code-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-editor-header {
+  background-color: #282c34;
+  color: white;
+  padding: 8px 12px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+}
+
+.code-editor {
+  width: 100%;
+  height: 300px;
+  background-color: #282c34;
+  color: #abb2bf;
+  font-family: 'Fira Code', monospace;
+  padding: 12px;
+  border: none;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+  resize: none;
+  outline: none;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.deploy-button {
+  margin-top: 16px;
+  align-self: flex-end;
+}
+
+.status-message {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.contract-address {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.contract-address span {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.contract-address code {
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  font-family: monospace;
+  overflow-wrap: anywhere;
+}
+
+.interact-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.function-box {
+  background-color: rgba(0, 0, 0, 0.02);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary);
+}
+
+.function-box.read-only {
+  border-left-color: #6c757d;
+}
+
+.function-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--dark);
+}
+
+.function-input {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.function-input input {
+  flex: 1;
+  min-width: 200px;
+  padding: 8px 12px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  outline: none;
+}
+
+.function-input input:focus {
+  border-color: var(--primary);
+}
+
+.result-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+}
+
+.result-label {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.result-value {
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.events-container {
+  background-color: rgba(0, 0, 0, 0.02);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.events-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--dark);
+}
+
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.event-item {
+  background-color: rgba(131, 56, 236, 0.05);
+  border-left: 3px solid var(--secondary);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.event-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.event-name {
+  font-family: 'Fira Code', monospace;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.event-timestamp {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.event-data {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.event-param {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+}
+
+.event-value {
+  font-weight: 600;
+  font-family: monospace;
+}
