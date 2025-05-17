@@ -28,6 +28,19 @@ module.exports = {
           750: '#2D2D3A',
           850: '#1E1E2A',
         },
+        purple: {
+          500: '#800080',
+          600: '#620062',
+        },
+        indigo: {
+          500: '#615fff',
+          600: '#4d4ccc',
+        },
+      },
+      gradient: {
+        'primary-purple': 'linear-gradient(to right, #800080, #620062)',
+        'primary-indigo': 'linear-gradient(to right, #615fff, #4d4ccc)',
+        'gradient-mix': 'linear-gradient(to left, #800080, #615fff, #4d4ccc)',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

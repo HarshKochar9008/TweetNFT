@@ -8,12 +8,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <div className="flex items-center">
-              <div className="w-10 h-10 flex items-center justify-center bg-gradient-to-br from-primary-500 to-twitter rounded-xl shadow-glow">
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M20.947 8.305a6.53 6.53 0 0 1-1.622.88 3.06 3.06 0 0 0-5.135-2.76 3.06 3.06 0 0 0-.884 2.12c-2.329-.18-4.518-1.205-5.949-3.019a3.06 3.06 0 0 0 .948 4.083 3.06 3.06 0 0 1-1.386-.384v.039a3.06 3.06 0 0 0 2.455 2.999 3.06 3.06 0 0 1-1.383.052 3.06 3.06 0 0 0 2.856 2.123 6.13 6.13 0 0 1-3.81 1.314c-.246 0-.49-.014-.73-.043A8.68 8.68 0 0 0 12 15.966c5.045 0 7.83-4.18 7.83-7.83 0-.12-.002-.24-.008-.356A5.55 5.55 0 0 0 21 6.47c-.5.221-1.04.371-1.607.442a2.62 2.62 0 0 0 1.156-1.454 5.31 5.31 0 0 1-1.78.702 2.598 2.598 0 0 0-4.42 2.37 7.4 7.4 0 0 1-5.373-2.727 2.6 2.6 0 0 0 .803 3.464 2.6 2.6 0 0 1-1.176-.323v.032a2.6 2.6 0 0 0 2.082 2.544 2.6 2.6 0 0 1-1.174.044 2.6 2.6 0 0 0 2.431 1.806 5.23 5.23 0 0 1-3.858 1.077A7.37 7.37 0 0 0 12 14.83c4.6 0 7.13-3.81 7.13-7.13z" />
-                </svg>
+              <div className="w-10 h-10 flex items-center justify-center">
+                <img src="/logo.png" alt="TweetNFT" className="w-full h-full object-cover text-shadow-lg shadow-primary-500/50" />
               </div>
-              <span className="ml-2 text-xl font-bold gradient-text font-poppins">
+              <span className="ml-2 text-xl font-bold gradient-text font-poppins bg-gradient-to-r from-primary-500 via-indigo-500 to-purple-600 bg-clip-text text-transparent">
                 TweetNFT
               </span>
             </div>
