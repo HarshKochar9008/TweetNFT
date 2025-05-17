@@ -34,36 +34,37 @@ const Navbar = () => {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-dark-100/95 backdrop-blur-md shadow-lg' : 'bg-dark-100'
-    } border-b border-gray-800`}>
+      scrolled ? 'bg-dark-100/90 backdrop-blur-xl shadow-lg' : 'bg-transparent'
+    }`}>
       <div className="container mx-auto px-4">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <Link 
             to="/" 
-            className="text-2xl font-extrabold tracking-tight text-white font-poppins hover:text-twitter transition-colors duration-200"
+            className="flex items-center group"
           >
-            TweetNFT
+            <div className="w-12 h-15 flex items-center justify-center transition-all duration-300">
+            <img src="/logo.png" alt="TweetNFT" className="w-full h-full object-cover" />
+            </div>
+            <span className="ml-2 text-2xl font-bold bg-gradient-to-r from-primary-400 to-twitter bg-clip-text text-transparent font-poppins transition-all duration-300">
+            </span>
           </Link>
 
           {/* Desktop navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-8">
+          <div className="hidden md:flex md:items-center md:space-x-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`px-3 py-2 text-base font-medium rounded transition-all duration-200 relative group ${
+                className={`px-4 py-2 mx-1 text-sm font-medium rounded-full transition-all duration-200 ${
                   isActive(item.path)
-                    ? 'text-twitter bg-dark-200'
-                    : 'text-gray-300 hover:text-white hover:bg-dark-200'
+                    ? 'text-white bg-gradient-to-r from-primary-600 to-twitter shadow-md'
+                    : 'text-gray-300 hover:text-white hover:bg-dark-200/60'
                 }`}
               >
                 {item.name}
-                <span className={`absolute bottom-0 left-0 w-0 h-0.5 bg-twitter transition-all duration-300 ${
-                  isActive(item.path) ? 'w-full' : 'group-hover:w-full'
-                }`}></span>
               </Link>
             ))}
-            <div className="ml-6">
+            <div className="ml-4">
               <WalletConnect />
             </div>
           </div>
@@ -75,10 +76,23 @@ const Navbar = () => {
             </div>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-400 hover:text-white p-2 rounded-lg bg-dark-200/80 hover:bg-dark-200 transition-all duration-200 focus:outline-none"
+              className={`p-2 rounded-lg transition-all duration-300 focus:outline-none ${
+                isMenuOpen 
+                  ? 'bg-dark-100 text-white' 
+                  : 'text-gray-400 hover:text-white bg-dark-200/50 hover:bg-dark-200'
+              }`}
               aria-label="Toggle menu"
             >
-              <span className="text-lg font-bold">{isMenuOpen ? '✕' : '☰'}</span>
+              <span className="sr-only">Menu</span>
+              {isMenuOpen ? (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -86,16 +100,16 @@ const Navbar = () => {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden glass-effect animate-fadeIn absolute w-full">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+        <div className="md:hidden absolute w-full bg-dark-100/95 backdrop-blur-xl border-b border-gray-800 animate-fadeIn shadow-lg">
+          <div className="px-4 py-3 space-y-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`block px-4 py-3 text-base font-medium rounded-lg transition-all duration-200 ${
+                className={`block px-4 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
                   isActive(item.path)
-                    ? 'text-white bg-dark-200 border-l-4 border-l-twitter'
-                    : 'text-gray-300 hover:text-white hover:bg-dark-200'
+                    ? 'text-white bg-gradient-to-r from-primary-600/80 to-twitter/80'
+                    : 'text-gray-300 hover:text-white hover:bg-dark-200/60'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >

@@ -1,60 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 import TweetCard from '../components/TweetCard';
 import TwitterAuth from '../components/TwitterAuth';
+import TwitterProfile from '../components/TwitterProfile';
+import { getUserProfile, getUserTweets, getTweetDetails } from '../services/twitterService';
 
 const TweetToNFT = () => {
   const { isConnected } = useAccount();
   const [tweetUrl, setTweetUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [tweets, setTweets] = useState([]);
+  const [twitterUser, setTwitterUser] = useState(null);
 
-  // Mock data - in production this would come from Twitter API
-  const mockTweets = [
-    {
-      id: '1675183492001972225',
-      name: 'Web3 User',
-      username: 'twitteruser',
-      profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-      date: 'Jul 1, 2023',
-      content: "Web3 is not just a technological evolution; it's a paradigm shift. The decentralized internet will return power to users and create new economic models. This is the future we're building together!",
-      image: 'https://images.unsplash.com/photo-1614064641938-3bbee52942c7',
-      likes: 2543,
-      retweets: 876,
-      comments: 145
-    },
-    {
-      id: '1674829103847362694',
-      name: 'Web3 User',
-      username: 'twitteruser',
-      profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-      date: 'Jun 30, 2023',
-      content: "NFTs are more than just digital art. They're the fundamental building blocks of digital ownership in the metaverse. We're still early, but the potential is limitless.",
-      image: '',
-      likes: 1876,
-      retweets: 542,
-      comments: 97
-    },
-    {
-      id: '1673715042947385346',
-      name: 'Web3 User',
-      username: 'twitteruser',
-      profileImage: 'https://randomuser.me/api/portraits/men/32.jpg',
-      date: 'Jun 27, 2023',
-      content: 'Just finished a deep dive into Ethereum scaling solutions. Layer 2s like Optimism and Arbitrum are game-changers. The future is bright for web3 usability!',
-      image: 'https://images.unsplash.com/photo-1639762681057-408e52192e55',
-      likes: 3412,
-      retweets: 1203,
-      comments: 256
+  useEffect(() => {
+    const loadTwitterUser = async () => {
+      const accessToken = localStorage.getItem('twitter_access_token');
+      if (accessToken) {
+        try {
+          const profile = await getUserProfile();
+          setTwitterUser(profile.data);
+          if (profile.data) {
+            const userTweets = await getUserTweets(profile.data.id);
+            setTweets(userTweets.data || []);
+          }
+        } catch (error) {
+          console.error('Error loading Twitter user:', error);
+          toast.error('Failed to load Twitter profile');
+        }
+      }
+    };
+
+    if (isConnected) {
+      loadTwitterUser();
     }
-  ];
+  }, [isConnected]);
 
-  const handleFetchTweet = (e) => {
+  const handleFetchTweet = async (e) => {
     e.preventDefault();
     
     if (!isConnected) {
       toast.error('Please connect your wallet first');
+      return;
+    }
+
+    if (!twitterUser) {
+      toast.error('Please connect your Twitter account first');
       return;
     }
     
@@ -71,44 +62,49 @@ const TweetToNFT = () => {
     
     setIsLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsLoading(false);
-      
+    try {
       // Extract tweet ID from URL
       const tweetId = tweetUrl.split('/').pop().split('?')[0];
       
-      // Find the tweet in our mock data
-      const foundTweet = mockTweets.find(t => t.id === tweetId);
+      // Fetch tweet details
+      const tweetData = await getTweetDetails(tweetId);
       
-      if (foundTweet) {
-        if (!tweets.some(t => t.id === foundTweet.id)) {
-          setTweets(prevTweets => [foundTweet, ...prevTweets]);
+      if (tweetData.data) {
+        if (!tweets.some(t => t.id === tweetData.data.id)) {
+          setTweets(prevTweets => [tweetData.data, ...prevTweets]);
           toast.success('Tweet found and ready to mint!');
         } else {
           toast.error('This tweet has already been added');
         }
       } else {
-        // If no exact match found, just show the first mock tweet
-        if (tweets.length === 0) {
-          setTweets([mockTweets[0]]);
-          toast.success('Tweet found and ready to mint!');
-        } else {
-          toast.error('Tweet not found. Please try another URL.');
-        }
+        toast.error('Tweet not found. Please try another URL.');
       }
-    }, 1500);
+    } catch (error) {
+      console.error('Error fetching tweet:', error);
+      toast.error('Failed to fetch tweet. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleLoadMyTweets = () => {
+  const handleLoadMyTweets = async () => {
+    if (!twitterUser) {
+      toast.error('Please connect your Twitter account first');
+      return;
+    }
+
     setIsLoading(true);
     
-    // Simulate API call delay
-    setTimeout(() => {
-      setIsLoading(false);
-      setTweets(mockTweets);
+    try {
+      const userTweets = await getUserTweets(twitterUser.id);
+      setTweets(userTweets.data || []);
       toast.success('Your tweets have been loaded!');
-    }, 1500);
+    } catch (error) {
+      console.error('Error loading tweets:', error);
+      toast.error('Failed to load tweets. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isConnected) {
@@ -128,37 +124,13 @@ const TweetToNFT = () => {
       <div className="flex flex-col md:flex-row gap-8">
         {/* Left Column */}
         <div className="w-full md:w-1/3 space-y-6">
-          <TwitterAuth />
+          <TwitterAuth onAuthSuccess={(user) => setTwitterUser(user)} />
           
-          <div className="card p-6">
-            <h2 className="text-xl font-bold text-white mb-4">NFT Settings</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-gray-400 text-sm block mb-2">Royalty Percentage</label>
-                <div className="flex items-center">
-                  <input 
-                    type="range" 
-                    min="0" 
-                    max="10"
-                    defaultValue="5"
-                    className="w-full h-2 bg-dark-100 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="ml-2 text-white min-w-[30px] text-right">5%</span>
-                </div>
-              </div>
-              
-              <div>
-                <label className="text-gray-400 text-sm block mb-2">Network</label>
-                <select className="w-full bg-dark-100 text-white px-3 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-1 focus:ring-primary-500">
-                  <option>Ethereum</option>
-                  <option>Polygon</option>
-                  <option>Optimism</option>
-                  <option>Arbitrum</option>
-                  <option>Base</option>
-                </select>
-              </div>
+          {twitterUser && (
+            <div className="card p-6">
+              <TwitterProfile username={twitterUser.username} />
             </div>
-          </div>
+          )}
           
           <div className="card p-6">
             <h2 className="text-xl font-bold text-white mb-4">Find Tweet</h2>
@@ -216,25 +188,19 @@ const TweetToNFT = () => {
           </div>
         </div>
         
-        {/* Right Column - Tweets */}
+        {/* Right Column */}
         <div className="w-full md:w-2/3">
           <div className="card p-6">
-            <h2 className="text-xl font-bold text-white mb-4">Tweet Selection</h2>
-            {tweets.length > 0 ? (
-              <div className="space-y-6">
-                {tweets.map((tweet) => (
-                  <TweetCard key={tweet.id} tweet={tweet} />
-                ))}
+            <h2 className="text-xl font-bold text-white mb-4">Selected Tweets</h2>
+            {tweets.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-400">No tweets selected yet</p>
               </div>
             ) : (
-              <div className="text-center py-12 border border-dashed border-gray-700 rounded-lg">
-                <svg className="w-12 h-12 text-gray-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                </svg>
-                <h3 className="text-white font-medium mb-2">No Tweets Selected</h3>
-                <p className="text-gray-400 max-w-md mx-auto">
-                  Enter a Tweet URL to fetch a specific Tweet, or click "Load My Tweets" to browse your recent tweets.
-                </p>
+              <div className="space-y-4">
+                {tweets.map(tweet => (
+                  <TweetCard key={tweet.id} tweet={tweet} />
+                ))}
               </div>
             )}
           </div>

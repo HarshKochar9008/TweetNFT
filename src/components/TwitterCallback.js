@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { exchangeCodeForToken, getUserProfile } from '../api/twitter';
+import { getUserProfile } from '../api/twitter';
 
 const TwitterCallback = () => {
   const navigate = useNavigate();
@@ -23,50 +23,76 @@ const TwitterCallback = () => {
           throw new Error('No authorization code received');
         }
 
+        const codeVerifier = localStorage.getItem('code_verifier');
+        if (!codeVerifier) {
+          throw new Error('No code verifier found. Please try connecting again.');
+        }
+
+        const redirectUri = process.env.REACT_APP_TWITTER_REDIRECT_URI;
+        if (!redirectUri) {
+          throw new Error('Twitter redirect URI not configured');
+        }
+
         // Exchange code for access token with retry logic
         let retryCount = 0;
         const maxRetries = 3;
-        let tokenResponse;
+        let tokenData;
 
         while (retryCount < maxRetries) {
           try {
-            tokenResponse = await exchangeCodeForToken(code);
+            const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            const tokenResponse = await fetch(`${apiUrl}/api/twitter/token`, {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              credentials: 'include',
+              body: JSON.stringify({
+                code,
+                redirect_uri: redirectUri,
+                code_verifier: codeVerifier
+              }),
+            });
+            
+            const responseData = await tokenResponse.json();
+            
+            if (!tokenResponse.ok) {
+              throw new Error(responseData.message || `HTTP error! Status: ${tokenResponse.status}`);
+            }
+            
+            tokenData = responseData;
             break;
           } catch (error) {
             retryCount++;
             if (retryCount === maxRetries) {
-              throw error;
+              throw new Error(`Failed to exchange code for token: ${error.message}`);
             }
-            // Wait for 1 second before retrying
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount)); // Exponential backoff
           }
+        }
+        
+        if (!tokenData || !tokenData.access_token) {
+          throw new Error('No access token received from server');
         }
         
         // Store tokens
-        localStorage.setItem('twitter_access_token', tokenResponse.access_token);
-        if (tokenResponse.refresh_token) {
-          localStorage.setItem('twitter_refresh_token', tokenResponse.refresh_token);
+        localStorage.setItem('twitter_access_token', tokenData.access_token);
+        if (tokenData.refresh_token) {
+          localStorage.setItem('twitter_refresh_token', tokenData.refresh_token);
         }
 
-        // Get user profile with retry logic
-        retryCount = 0;
-        let userProfile;
-
-        while (retryCount < maxRetries) {
-          try {
-            userProfile = await getUserProfile(tokenResponse.access_token);
-            break;
-          } catch (error) {
-            retryCount++;
-            if (retryCount === maxRetries) {
-              throw error;
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-          }
+        // Store user data if provided in the token response
+        if (tokenData.user) {
+          localStorage.setItem('twitter_user', JSON.stringify(tokenData.user));
+        } else {
+          // If user data wasn't included in token response, fetch it
+          const userProfile = await getUserProfile(tokenData.access_token);
+          localStorage.setItem('twitter_user', JSON.stringify(userProfile.data));
         }
-        
-        // Store user data
-        localStorage.setItem('twitter_user', JSON.stringify(userProfile.data));
+
+        // Clear the code verifier as it's no longer needed
+        localStorage.removeItem('code_verifier');
 
         toast.success('Twitter account connected successfully!');
         navigate('/dashboard', { replace: true });

@@ -24,12 +24,12 @@ const TweetCard = ({ tweet }) => {
     <div className="card overflow-hidden hover:shadow-card transition-all duration-300 group">
       <div className="absolute inset-x-0 -top-px h-0.5 bg-gradient-to-r from-transparent via-twitter to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
-      <div className="p-5">
+      <div className="p-6">
         <div className="flex items-start mb-4">
           <div className="mr-3 relative">
             <img 
-              src={tweet.profileImage} 
-              alt={tweet.username} 
+              src={tweet.author.profile_image_url} 
+              alt={tweet.author.username} 
               className="w-12 h-12 rounded-full border-2 border-dark-100 object-cover"
             />
             <div className="absolute -bottom-1 -right-1 bg-twitter rounded-full w-5 h-5 flex items-center justify-center">
@@ -38,13 +38,14 @@ const TweetCard = ({ tweet }) => {
               </svg>
             </div>
           </div>
+          
           <div className="flex-1">
             <div className="flex items-center flex-wrap">
-              <p className="font-semibold text-white mr-2">{tweet.name}</p>
+              <p className="font-semibold text-white mr-2">{tweet.author.name}</p>
               <div className="flex items-center text-gray-400 text-sm">
-                <span>@{tweet.username}</span>
+                <span>@{tweet.author.username}</span>
                 <span className="mx-2 text-gray-500">·</span>
-                <span>{formatDate(tweet.date)}</span>
+                <span>{formatDate(tweet.created_at)}</span>
               </div>
               <div className="ml-auto">
                 <svg className="w-5 h-5 text-twitter" fill="currentColor" viewBox="0 0 24 24">
@@ -54,27 +55,27 @@ const TweetCard = ({ tweet }) => {
             </div>
             
             <div className="mt-3">
-              <p className="text-white leading-relaxed text-base">{tweet.content}</p>
+              <p className="text-white leading-relaxed text-base">{tweet.text}</p>
             </div>
             
-            {tweet.image && (
+            {tweet.attachments?.media && (
               <div className="mt-4 rounded-xl overflow-hidden border border-gray-800">
                 <img 
-                  src={tweet.image} 
+                  src={tweet.attachments.media[0].url} 
                   alt="Tweet media" 
                   className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
             )}
             
-            <div className="flex items-center mt-4 text-gray-400 text-sm space-x-6">
+            <div className="mt-4 flex items-center space-x-6">
               <div className="flex items-center group cursor-pointer">
                 <div className="p-1.5 rounded-full group-hover:bg-blue-500/10 group-hover:text-blue-400 transition-colors">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                   </svg>
                 </div>
-                <span className="ml-1 group-hover:text-blue-400">{tweet.comments}</span>
+                <span className="ml-1 group-hover:text-blue-400">{tweet.public_metrics.reply_count}</span>
               </div>
               
               <div className="flex items-center group cursor-pointer">
@@ -83,7 +84,7 @@ const TweetCard = ({ tweet }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
                   </svg>
                 </div>
-                <span className="ml-1 group-hover:text-green-400">{tweet.retweets}</span>
+                <span className="ml-1 group-hover:text-green-400">{tweet.public_metrics.retweet_count}</span>
               </div>
               
               <div className="flex items-center group cursor-pointer">
@@ -92,7 +93,7 @@ const TweetCard = ({ tweet }) => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                   </svg>
                 </div>
-                <span className="ml-1 group-hover:text-red-400">{tweet.likes}</span>
+                <span className="ml-1 group-hover:text-red-400">{tweet.public_metrics.like_count}</span>
               </div>
               
               <div className="flex items-center text-xs bg-dark-100 px-2.5 py-1 rounded-full">
@@ -100,14 +101,14 @@ const TweetCard = ({ tweet }) => {
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                   <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                 </svg>
-                {tweet.views || "1.2K"}
+                {tweet.public_metrics.impression_count || "1.2K"}
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      <div className="border-t border-gray-800 p-5 bg-gradient-to-r from-dark-200 to-dark-100">
+      <div className="px-6 pb-6">
         {isMinted ? (
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
             <div className="flex items-center text-green-400">

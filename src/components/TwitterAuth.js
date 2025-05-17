@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { toast } from 'react-hot-toast';
 
-const TwitterAuth = () => {
+const TwitterAuth = ({ onAuthSuccess }) => {
   const { isConnected } = useAccount();
   const [isTwitterConnected, setIsTwitterConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,8 +21,10 @@ const TwitterAuth = () => {
         if (accessToken) {
           const userData = localStorage.getItem('twitter_user');
           if (userData) {
+            const parsedUserData = JSON.parse(userData);
             setIsTwitterConnected(true);
-            setTwitterUser(JSON.parse(userData));
+            setTwitterUser(parsedUserData);
+            onAuthSuccess?.(parsedUserData.username);
           }
         }
       } catch (error) {
@@ -31,7 +33,7 @@ const TwitterAuth = () => {
     };
 
     checkTwitterAuth();
-  }, []);
+  }, [onAuthSuccess]);
 
   const generateCodeVerifier = () => {
     const array = new Uint8Array(32);
